@@ -1,8 +1,6 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -14,12 +12,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    #- name: Build the Docker image
-    #  run: docker build . --file ./scale/Dockerfile --tag my-image-name:$(date +%s)
-    - uses: akhileshns/heroku-deploy@v3.8.9 # This is the action
-      with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name:  ${{secrets.HEROKU_APP_NAME}} #Must be unique in Heroku
-        heroku_email:  ${{secrets.HEROKU_EMAIL}}
-        usedocker: true
-        appDir: "scale"
+    - name: Build the Docker image
+      run: docker build . --file ./scale/Dockerfile --tag my-image-name:$(date +%s)
