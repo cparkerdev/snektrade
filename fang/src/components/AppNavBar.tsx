@@ -2,6 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Navbar, Button, Alignment, Intent, Position, Menu, Popover, MenuItem } from "@blueprintjs/core";
 import React from "react";
 import {useHistory} from "react-router-dom";
+import SnekStLogo from '../imgs/snekst_logo.svg';
 import "./AppNavBar.css"
 
 export function AppNavBar() { 
@@ -98,7 +99,8 @@ const Profile = () => {
 return (
 <Navbar className="bp3-dark"  >
 <Navbar.Group align={Alignment.LEFT}>
-    <Navbar.Heading><Button className="bp3-minimal" icon="home" text="Snek St." onClick={handleHomeClick} /></Navbar.Heading>
+
+    <Navbar.Heading><Button className="bp3-minimal" onClick={handleHomeClick}><img style={{width:"125px", margin:"8px 0px 0px 0px"}} src={SnekStLogo} alt="Snek St." /></Button></Navbar.Heading>
     <Navbar.Divider />
     <Button className="bp3-minimal" icon="bank-account" text="Tracker" onClick={handlePosClick}  />
     <Navbar.Divider />
