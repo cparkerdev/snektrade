@@ -1,0 +1,15 @@
+version: '3'
+services:
+        postgres:
+                image: 'postgres:13.1'
+
+                ports:
+                        - "5432-5440:5432"
+
+                environment:
+                        - POSTGRES_USER=${UN}
+                        - POSTGRES_PASSWORD=${PW}
+                volumes:
+                        - pg-data:/var/lib/postgresql/data
+volumes:
+        pg-data:
