@@ -23,7 +23,6 @@ func main() {
 
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			fmt.Println(token.Claims)
 
 			aud := token.Claims.(jwt.MapClaims)["aud"].([]interface{})
 
@@ -86,6 +85,7 @@ func main() {
 	tradeCtrl := controllers.NewTrade(tSvc)
 	transCtrl := controllers.NewTrans(tSvc)
 	lotCtrl := controllers.NewLot(tSvc)
+	settingsCtrl := controllers.NewAccountSettings(tSvc)
 
 	r := mux.NewRouter()
 
@@ -111,6 +111,10 @@ func main() {
 	r.Handle("/lot", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(lotCtrl.Handle))))
+
+	r.Handle("/settings", negroni.New(
+		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
+		negroni.Wrap(http.HandlerFunc(settingsCtrl.Handle))))
 
 	/*
 		mux := http.NewServeMux()

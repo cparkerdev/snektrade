@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ReadLot } from "./models/LotModel";
+import { ReadSettings } from "./models/SettingsModel";
 import { TradeModel } from "./models/TradeModel";
 import { ReadTransaction } from "./models/TransactionModel";
 
@@ -9,8 +10,6 @@ export class TradeService {
     }
     opts: any = {}
     host = process.env.REACT_APP_TRADE_API;
-  
-    // 'http://localhost:8080'
 
     async CreateTrade(trade: TradeModel) : Promise<string> {
         
@@ -24,8 +23,17 @@ export class TradeService {
     }
 
     async GetOpenLots() : Promise<ReadLot[]> {
-        console.log(this.opts);
         const res = await axios.get(`${this.host}/lot`, this.opts);
+        return res.data;
+    }
+
+    async GetAccountSettings() : Promise<ReadSettings> {
+        const res = await axios.get(`${this.host}/settings`, this.opts);
+        return res.data;
+    }
+
+    async SaveAccountSettings(settings: ReadSettings) : Promise<ReadSettings> {
+        const res = await axios.post(`${this.host}/settings`, settings, this.opts);
         return res.data;
     }
 }

@@ -2,6 +2,7 @@ import { Callout, Card, Intent, Tab, TabId, Tabs } from "@blueprintjs/core";
 import React from "react";
 import { Perf } from "./Perf";
 import { PositionList } from "./PositionList";
+import { Settings } from "./Settings";
 import { Transactions } from "./Transactions";
 
 
@@ -28,6 +29,7 @@ export function Tracker() {
         <Tab id="Positions" title="Positions" className="bp3-dark" panel={<PositionList />} />
         <Tab id="Transactions" title="History" panel={<Transactions />} />
         <Tab id="Reports" title="G/L" panel={<Perf />} />
+        <Tab id="Settings" title="Settings" panel={<Settings />} />
     </Tabs>
     </Card>
     );

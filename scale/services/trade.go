@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"scale/entities"
 	"scale/models"
 	"scale/repos"
@@ -12,20 +13,21 @@ type Trade struct {
 }
 
 // CreateTrade : Creates new trade
-func (t Trade) CreateTrade(ctModel *models.CreateTrade) string {
+func (t Trade) CreateTrade(ctModel *models.CreateTrade, userID string) string {
 	ctEntity := &entities.Trade{
 		Symbol:   ctModel.Symbol,
 		Strategy: ctModel.Strategy,
 		OpenedAt: ctModel.OpenedAt,
+		UserID:   userID,
 	}
 	trans := []*entities.Transaction{}
 	newLots := []*entities.Lot{}
 	updateLots := []*entities.Lot{}
 
 	for _, tMod := range ctModel.Transactions {
-		trans = append(trans, convertNewTransaction(tMod))
+		trans = append(trans, convertNewTransaction(tMod, userID))
 		if tMod.Lot.ID == "" {
-			newLots = append(newLots, createLotFromTransaction(tMod))
+			newLots = append(newLots, createLotFromTransaction(tMod, userID))
 		} else {
 			updateLots = append(updateLots, updateLotFromTransaction(tMod))
 		}
@@ -47,8 +49,8 @@ func (t Trade) CreateTrade(ctModel *models.CreateTrade) string {
 }
 
 // FindOpenTransactions : Find All Open Transactions
-func (t Trade) FindOpenTransactions() []*models.ReadTransaction {
-	trEntity := t.tradeRepo.FindOpenTransactions()
+func (t Trade) FindOpenTransactions(userID string) []*models.ReadTransaction {
+	trEntity := t.tradeRepo.FindOpenTransactions(userID)
 	trModel := []*models.ReadTransaction{}
 
 	for _, tre := range trEntity {
@@ -59,8 +61,8 @@ func (t Trade) FindOpenTransactions() []*models.ReadTransaction {
 }
 
 // FindOpenLots : Get All Open Lots
-func (t Trade) FindOpenLots() []*models.ReadLot {
-	lEntity := t.tradeRepo.FindOpenLots()
+func (t Trade) FindOpenLots(userID string) []*models.ReadLot {
+	lEntity := t.tradeRepo.FindOpenLots(userID)
 
 	lModel := []*models.ReadLot{}
 
@@ -71,11 +73,45 @@ func (t Trade) FindOpenLots() []*models.ReadLot {
 	return lModel
 }
 
+// FindAccountSettings : Get Users Account Settings
+func (t Trade) FindAccountSettings(userID string) *models.ReadAccountSettings {
+	asEnt := t.tradeRepo.ReadAccSettings(userID)
+	return convertAccSettings(asEnt)
+}
+
+// SaveAccountSettings : Saves Users Account Settings
+func (t Trade) SaveAccountSettings(as *models.UpsertAccountSettings, userID string) *models.ReadAccountSettings {
+
+	asEnt := convertSettingsToEnt(as, userID)
+	fmt.Println(asEnt)
+	t.tradeRepo.SaveAccSettings(asEnt, userID)
+
+	return t.FindAccountSettings(userID)
+
+}
+
 // NewTrade : Trade Service constructor
 func NewTrade(t *repos.Trade) *Trade {
 	tSvc := new(Trade)
 	tSvc.tradeRepo = t
 	return tSvc
+}
+
+func convertSettingsToEnt(asMod *models.UpsertAccountSettings, userID string) *entities.AccountSettings {
+	return &entities.AccountSettings{
+		ID:           asMod.ID,
+		UserID:       userID,
+		ContractComm: asMod.ContractComm,
+		AssignFee:    asMod.AssignFee,
+	}
+}
+
+func convertAccSettings(asEnt *entities.AccountSettings) *models.ReadAccountSettings {
+	return &models.ReadAccountSettings{
+		ID:           asEnt.ID,
+		ContractComm: asEnt.ContractComm,
+		AssignFee:    asEnt.AssignFee,
+	}
 }
 
 func convertReadTransaction(te entities.Transaction) *models.ReadTransaction {
@@ -97,7 +133,7 @@ func convertReadTransaction(te entities.Transaction) *models.ReadTransaction {
 	}
 }
 
-func convertNewTransaction(tMod *models.CreateTransaction) *entities.Transaction {
+func convertNewTransaction(tMod *models.CreateTransaction, userID string) *entities.Transaction {
 	return &entities.Transaction{
 		Symbol:     tMod.Symbol,
 		Quantity:   tMod.Quantity,
@@ -111,10 +147,11 @@ func convertNewTransaction(tMod *models.CreateTransaction) *entities.Transaction
 		Expiry:     tMod.Expiry,
 		TransType:  tMod.TransType,
 		IsShort:    tMod.IsShort,
+		UserID:     userID,
 	}
 }
 
-func createLotFromTransaction(t *models.CreateTransaction) *entities.Lot {
+func createLotFromTransaction(t *models.CreateTransaction, userID string) *entities.Lot {
 	return &entities.Lot{
 		Symbol:     t.Symbol,
 		Quantity:   t.Quantity,
@@ -125,6 +162,7 @@ func createLotFromTransaction(t *models.CreateTransaction) *entities.Lot {
 		IsShort:    t.IsShort,
 		IsMargin:   t.IsMargin,
 		Obligation: calcObligation(t),
+		UserID:     userID,
 	}
 }
 
@@ -194,7 +232,11 @@ func calcTransactionAmount(t *models.CreateTransaction) float32 {
 		optMux = 100
 	}
 
-	amount := (sMux * (t.Price * t.Quantity * optMux)) - (t.Fees + t.Commission)
+	amount := (sMux * (t.Price * t.Quantity * optMux))
+
+	if t.TransType != 0 {
+		amount += (t.Commission)
+	}
 
 	return amount
 }

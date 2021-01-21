@@ -82,7 +82,7 @@ function renderStratForm(strat: number) {
 
   const onConfirmClick = () => {
       console.log(tradeData);
-      new TradeService(userCtx.accessToken).CreateTrade(convertTradeUIToData(tradeData)).then((id) => {
+      new TradeService(userCtx.userData.accessToken).CreateTrade(convertTradeUIToData(tradeData)).then((id) => {
           tradeData.Id = id;
           props.onTradeComplete();
       }).finally(() => {
@@ -125,7 +125,7 @@ function renderStratForm(strat: number) {
         const trModel: CreateTransaction = {
             OpenedAt: new Date(tradeUI.Opened),
             Amount: tr.Amount,
-            Commission: tr.Commission,
+            Commission:  tr.TransType !== 0 ? tr.Quantity * userCtx.userData.settings.ContractComm : tr.Commission,
             Fees: tr.Fees,
             IsMargin: tr.IsMargin,
             Price: tr.Price,
