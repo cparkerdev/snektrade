@@ -2,6 +2,7 @@ import { ButtonGroup, Button, Popover, Position, PopoverInteractionKind, Intent,
 import React, { useContext, useEffect, useState } from "react";
 import { TradeService } from "../services/TradeService";
 import { UserContext } from "../services/UserContext";
+import { numberWithCommas } from "../utils/calcs";
 import { LotUI } from "./models/LotUI";
 import { TradeUI } from "./models/TradeUI";
 import { PositionRow } from "./PositionRow";
@@ -70,7 +71,7 @@ export function PositionList()  {
                 <Trade trade={tradeData} onTradeComplete={onTradeCompleteHandle} />
 </Popover>
 </ButtonGroup>
-<label style={{margin: "0px 0px 0px 25px"}}>CSP Reserve: ${csp.toFixed(2)}</label>
+<label style={{margin: "0px 0px 0px 25px"}}>CSP Reserve: ${numberWithCommas(csp)}</label>
 <table className="bp3-dark bp3-html-table bp3-html-table-condensed bp3-html-table-bordered bp3-html-table-striped bp3-interactive">
   <thead>
     <tr>

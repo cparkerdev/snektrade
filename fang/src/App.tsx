@@ -16,7 +16,7 @@ import { Home } from './components/Home';
 import { AppNavBar } from "./components/AppNavBar";
 import { Tracker } from "./components/Tracker";
 import { useAuth0 } from "@auth0/auth0-react";
-import {UserContext} from './services/UserContext';
+import { UserContext } from './services/UserContext';
 import { UserModel } from "./services/models/UserModel";
 import { TradeService } from "./services/TradeService";
 

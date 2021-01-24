@@ -70,6 +70,15 @@ const ProfileMenu = () => {
   );
 }
 
+
+const TrackerBtn = () => {
+  if(isAuthenticated) {
+  return <Button className="bp3-minimal" icon="bank-account" text="Tracker" onClick={handlePosClick}  />
+  } else {
+    return <div></div>
+  }
+}
+
 const Profile = () => {
 
 
@@ -99,11 +108,9 @@ const Profile = () => {
 return (
 <Navbar className="bp3-dark"  >
 <Navbar.Group align={Alignment.LEFT}>
-
     <Navbar.Heading><Button className="bp3-minimal" onClick={handleHomeClick}><img style={{width:"125px", margin:"8px 0px 0px 0px"}} src={SnekStLogo} alt="Snek St." /></Button></Navbar.Heading>
     <Navbar.Divider />
-    <Button className="bp3-minimal" icon="bank-account" text="Tracker" onClick={handlePosClick}  />
-    <Navbar.Divider />
+    <TrackerBtn />
 </Navbar.Group>
 <Navbar.Group align={Alignment.RIGHT}>
 <LoginButton/>

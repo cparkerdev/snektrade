@@ -9,11 +9,11 @@ export type PositionRowProps = { l: LotUI, index: number, openTrade: (trade: Tra
 export function PositionRow(props: PositionRowProps) {
 
 
-    let [isExpanded, setIsExpanded] = React.useState(false);
+    let [isExpanded ] = React.useState(false);
     const trade = new TradeUI();
     trade.Symbol = props.l.Symbol;
     trade.Strategy = props.l.Strategy;
-
+    /*
     const onExpandClick = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         setIsExpanded(!isExpanded);
     }
@@ -25,7 +25,7 @@ export function PositionRow(props: PositionRowProps) {
     const notOption = () => {
         return props.l.Strategy === 0 ? true : false
     }
-
+*/
     const getTradeCopy = () => {
         const trade = new TradeUI();
         trade.Strategy = props.l.Strategy;
@@ -82,14 +82,15 @@ export function PositionRow(props: PositionRowProps) {
 
     const rowMenu = (
         <Menu>
-            <MenuItem  icon="graph" text={`Buy${props.l.IsShort ? " Back" : " More"}`} onClick={() => openBuyTrade()}/>
-            <MenuItem icon="map" text={`Sell${props.l.IsShort ? " More" : " Back"}`} onClick={() => openSellTrade()} />
+            <MenuItem text={`Buy${props.l.IsShort ? " Back" : " More"}`} onClick={() => openBuyTrade()}/>
+            <MenuItem text={`Sell${props.l.IsShort ? " More" : " Back"}`} onClick={() => openSellTrade()} />
             <MenuDivider />
-            <MenuItem icon="th" text="Roll" disabled={notOption()} />
+           {/* <MenuItem icon="th" text="Roll" disabled={notOption()} />
             <MenuItem icon="zoom-to-fit" text="Exercise" disabled={notOption()} />
             <MenuItem icon="zoom-to-fit" text="Close" disabled={notOption()} />
             <MenuDivider />
-            <MenuItem icon="zoom-to-fit" text="Delete" />
+        */}
+           {/* <MenuItem icon="zoom-to-fit" text="Delete" /> */}
         </Menu>
     );
 
@@ -101,7 +102,7 @@ export function PositionRow(props: PositionRowProps) {
         <React.Fragment>
         <tr key={props.index}>
           <td>
-                <Button  icon={chevronIcon()} minimal={true} small={true} onClick={onExpandClick}></Button>
+               {/* <Button  icon={chevronIcon()} minimal={true} small={true} onClick={onExpandClick}></Button>*/}
                 <Popover content={rowMenu} position={Position.BOTTOM_RIGHT}  >
                     <Button  minimal={true} small={true} rightIcon="menu" alignText="right" inlist={true} />
                 </Popover>

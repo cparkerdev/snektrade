@@ -25,7 +25,7 @@ func (t Trade) CreateTrade(ctModel *models.CreateTrade, userID string) string {
 	updateLots := []*entities.Lot{}
 
 	for _, tMod := range ctModel.Transactions {
-		trans = append(trans, convertNewTransaction(tMod, userID))
+		trans = append(trans, convertNewTransaction(tMod, ctModel, userID))
 		if tMod.Lot.ID == "" {
 			newLots = append(newLots, createLotFromTransaction(tMod, userID))
 		} else {
@@ -133,7 +133,7 @@ func convertReadTransaction(te entities.Transaction) *models.ReadTransaction {
 	}
 }
 
-func convertNewTransaction(tMod *models.CreateTransaction, userID string) *entities.Transaction {
+func convertNewTransaction(tMod *models.CreateTransaction, tr *models.CreateTrade, userID string) *entities.Transaction {
 	return &entities.Transaction{
 		Symbol:     tMod.Symbol,
 		Quantity:   tMod.Quantity,
@@ -142,7 +142,7 @@ func convertNewTransaction(tMod *models.CreateTransaction, userID string) *entit
 		Commission: tMod.Commission,
 		Fees:       tMod.Fees,
 		IsMargin:   tMod.IsMargin,
-		OpenedAt:   tMod.OpenedAt,
+		OpenedAt:   tr.OpenedAt,
 		Strike:     tMod.Strike,
 		Expiry:     tMod.Expiry,
 		TransType:  tMod.TransType,

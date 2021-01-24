@@ -8,6 +8,7 @@ import (
 	"scale/controllers"
 	"scale/repos"
 	"scale/services"
+	"strings"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
@@ -75,6 +76,14 @@ func main() {
 		dsn = os.Getenv("DATABASE_URL")
 	}
 
+	webHosts := strings.Split(os.Getenv("SNEKTRADE_WEB_HOSTS"), ";")
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:   webHosts,
+		AllowCredentials: true,
+		AllowedHeaders:   []string{"*"},
+	})
+
 	port := os.Getenv("PORT")
 
 	tRepo, _ := repos.NewTrade(dsn)
@@ -132,14 +141,8 @@ func main() {
 		})
 	*/
 
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowCredentials: true,
-		AllowedHeaders:   []string{"*"},
-	})
-
 	handler := c.Handler(r)
 	http.Handle("/", r)
 	fmt.Println("Listening...")
-	http.ListenAndServe(fmt.Sprintf("0.0.0.0:%s", port), handler)
+	http.ListenAndServe(fmt.Sprintf(":%s", port), handler)
 }

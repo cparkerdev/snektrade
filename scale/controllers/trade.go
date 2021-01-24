@@ -83,7 +83,7 @@ func NewTrans(tSvc *services.Trade) *Transaction {
 
 // Handle : Handle for Creating New Transactions
 func (t Transaction) Handle(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
+	//enableCors(&w)
 	switch method := req.Method; method {
 	case "POST":
 		t.postHandle(w, req)
@@ -126,7 +126,7 @@ func NewLot(tSvc *services.Trade) *Lot {
 
 // Handle : Handle for Creating New Lots
 func (l Lot) Handle(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
+	//enableCors(&w)
 	switch method := req.Method; method {
 	case "GET":
 		l.getHandle(w, req)
@@ -162,7 +162,7 @@ func NewAccountSettings(tSvc *services.Trade) *AccountSettings {
 
 // Handle : Handle for Creating New Lots
 func (as AccountSettings) Handle(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
+	//enableCors(&w)
 	switch method := req.Method; method {
 	case "GET":
 		as.getHandle(w, req)
