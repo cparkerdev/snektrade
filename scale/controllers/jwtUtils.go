@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"net/http"
 	"strings"
 
-	"github.com/form3tech-oss/jwt-go"
+	jwt "github.com/form3tech-oss/jwt-go"
 )
 
 // CustomClaims : holds all custom permisions for user
@@ -36,4 +37,28 @@ func CheckScope(scope string, tokenString string) bool {
 	}
 
 	return hasScope
+}
+
+// GetUserID : Get user Id from jwt token
+func GetUserID(r *http.Request) string {
+
+	authHeaderParts := strings.Split(r.Header.Get("Authorization"), " ")
+	tokenString := authHeaderParts[1]
+
+	token, _ := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		cert, err := GetPemCert(token)
+		if err != nil {
+			return nil, err
+		}
+		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+		return result, nil
+	})
+
+	claims, ok := token.Claims.(*CustomClaims)
+
+	if ok && token.Valid {
+		return claims.Subject
+	}
+
+	return ""
 }

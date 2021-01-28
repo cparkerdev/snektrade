@@ -4,11 +4,12 @@ import "time"
 
 //Lot : Asset Lots
 type Lot struct {
-	ID         string `gorm:"primaryKey"`
-	Symbol     string
-	Quantity   float32
-	Price      float32
-	Strategy   uint8
+	ID         string  `gorm:"primaryKey"`
+	UserID     string  `gorm:"index;not null"`
+	Symbol     string  `gorm:"not null"`
+	Quantity   float32 `gorm:"not null"`
+	Price      float32 `gorm:"not null"`
+	Strategy   uint8   `gorm:"not null"`
 	IsClosed   bool
 	IsShort    bool
 	IsMargin   bool

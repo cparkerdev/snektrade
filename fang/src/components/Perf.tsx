@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { ResponsiveBar } from '@nivo/bar'
 import { TableTransactionUI } from "./models/TransactionUI";
 import { TradeService } from "../services/TradeService";
-import { isWhiteSpaceLike } from "typescript";
 import { UserContext } from "../services/UserContext";
 
 class AggTrans {
@@ -24,7 +23,7 @@ export const Perf = () => {
   
       useEffect(() => {
         async function fetchData() {
-            const tradeSvc = new TradeService(userCtx.accessToken);
+            const tradeSvc = new TradeService(userCtx.userData.accessToken);
             const data = await tradeSvc.GetOpenTransactions();
             const trUIList:  TableTransactionUI[] = data.map((t) => {
                 return {
@@ -66,7 +65,7 @@ export const Perf = () => {
     
     
             setAgg(group);
-            setColors(group.map(x => x.gain === 0 ? "#0D8050" : "#C23030"));
+            setColors(group.map(x => x.gain === 0 ? "#C23030" : "#0D8050"));
         }
           fetchData()
         }, [userCtx])

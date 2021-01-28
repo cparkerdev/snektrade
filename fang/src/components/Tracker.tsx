@@ -1,7 +1,8 @@
-import { Callout, Card, Intent, Tab, TabId, Tabs } from "@blueprintjs/core";
+import { Card, Tab, TabId, Tabs } from "@blueprintjs/core";
 import React from "react";
 import { Perf } from "./Perf";
 import { PositionList } from "./PositionList";
+import { Settings } from "./Settings";
 import { Transactions } from "./Transactions";
 
 
@@ -13,11 +14,11 @@ export function Tracker() {
     const handleNavbarTabChange = (navbarTabId: TabId) => setCurrentTab(navbarTabId.toString());
 
     return(
-        <Card>
-            <Callout title="Demo Data" intent={Intent.WARNING}>
+        <Card>{/*<Callout title="Demo Data" intent={Intent.WARNING}>
                 This data is for demonstration purposes only and will not be saved. 
                 To track your own data, please sign up for an account.
-            </Callout>
+             </Callout>
+    */}
         <Tabs
         animate={true}
         id="navbar"
@@ -28,6 +29,7 @@ export function Tracker() {
         <Tab id="Positions" title="Positions" className="bp3-dark" panel={<PositionList />} />
         <Tab id="Transactions" title="History" panel={<Transactions />} />
         <Tab id="Reports" title="G/L" panel={<Perf />} />
+        <Tab id="Settings" title="Settings" panel={<Settings />} />
     </Tabs>
     </Card>
     );

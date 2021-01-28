@@ -16,50 +16,35 @@ import { Home } from './components/Home';
 import { AppNavBar } from "./components/AppNavBar";
 import { Tracker } from "./components/Tracker";
 import { useAuth0 } from "@auth0/auth0-react";
-import {UserContext} from './services/UserContext';
+import { UserContext } from './services/UserContext';
 import { UserModel } from "./services/models/UserModel";
+import { TradeService } from "./services/TradeService";
 
 function App() {
 
   const { user, getAccessTokenSilently } = useAuth0();
   const [userData, setUserData] = useState(new UserModel());
-
+  
+  const updateSettings = async () => {
+    const settings = await new TradeService(userData.accessToken).GetAccountSettings();
+    const newUser: UserModel = {name: userData.name, email: userData.email, accessToken: userData.accessToken, settings}
+    setUserData(newUser)
+  }
   
   useEffect(() => {
   const getUserMetadata = async () => {
-    
-    const domain = "snekst.us.auth0.com";
 
     try {
-      /*
-      const accessTokenMgmtApi = await getAccessTokenSilently({
-        audience: `https://${domain}/api/v2/`,
-        scope: "read:current_user",
-      });
-      */
-      console.log(domain);
 
       const accessTokenSnekTrade = await getAccessTokenSilently({
         audience: `https://snekst.com/trade`,
         scope: "openid profile email",
       });
 
-      console.log(accessTokenSnekTrade);
+      const settings = await new TradeService(accessTokenSnekTrade).GetAccountSettings();
+      console.log(settings);
 
-      /*
-      const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
-
-      const metadataResponse = await fetch(userDetailsByIdUrl, {
-        headers: {
-          Authorization: `Bearer ${accessTokenMgmtApi}`,
-        },
-      });
-
-      const userData = await metadataResponse.json();
-      console.log(userData);
-      */
-
-      const userModel: UserModel = {name: user.name, accessToken: accessTokenSnekTrade, email: user.email}
+      const userModel: UserModel = {name: user.name, accessToken: accessTokenSnekTrade, email: user.email, settings: settings}
       setUserData(userModel);
     } catch (e) {
       console.log(e.message);
@@ -72,7 +57,7 @@ function App() {
 }, [getAccessTokenSilently, setUserData, user]);
 
   return (
-    <UserContext.Provider value={userData}>
+    <UserContext.Provider value={{userData, updateSettings}}>
       <Router>
         <AppNavBar/>
         <Switch>

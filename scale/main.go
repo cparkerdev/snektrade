@@ -8,6 +8,7 @@ import (
 	"scale/controllers"
 	"scale/repos"
 	"scale/services"
+	"strings"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
@@ -23,7 +24,6 @@ func main() {
 
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			fmt.Println(token.Claims)
 
 			aud := token.Claims.(jwt.MapClaims)["aud"].([]interface{})
 
@@ -76,6 +76,14 @@ func main() {
 		dsn = os.Getenv("DATABASE_URL")
 	}
 
+	webHosts := strings.Split(os.Getenv("SNEKTRADE_WEB_HOSTS"), ";")
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:   webHosts,
+		AllowCredentials: true,
+		AllowedHeaders:   []string{"*"},
+	})
+
 	port := os.Getenv("PORT")
 
 	tRepo, _ := repos.NewTrade(dsn)
@@ -86,6 +94,7 @@ func main() {
 	tradeCtrl := controllers.NewTrade(tSvc)
 	transCtrl := controllers.NewTrans(tSvc)
 	lotCtrl := controllers.NewLot(tSvc)
+	settingsCtrl := controllers.NewAccountSettings(tSvc)
 
 	r := mux.NewRouter()
 
@@ -112,6 +121,10 @@ func main() {
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(lotCtrl.Handle))))
 
+	r.Handle("/settings", negroni.New(
+		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
+		negroni.Wrap(http.HandlerFunc(settingsCtrl.Handle))))
+
 	/*
 		mux := http.NewServeMux()
 		mux.HandleFunc("/trade", tradeCtrl.Handle)
@@ -128,14 +141,8 @@ func main() {
 		})
 	*/
 
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowCredentials: true,
-		AllowedHeaders:   []string{"*"},
-	})
-
 	handler := c.Handler(r)
 	http.Handle("/", r)
 	fmt.Println("Listening...")
-	http.ListenAndServe(fmt.Sprintf("0.0.0.0:%s", port), handler)
+	http.ListenAndServe(fmt.Sprintf(":%s", port), handler)
 }

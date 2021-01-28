@@ -1,7 +1,8 @@
-import { ButtonGroup, Button, Popover, Position, PopoverInteractionKind, Intent } from "@blueprintjs/core";
+import { ButtonGroup, Button, Popover, Position, PopoverInteractionKind, Intent, Card } from "@blueprintjs/core";
 import React, { useContext, useEffect, useState } from "react";
 import { TradeService } from "../services/TradeService";
 import { UserContext } from "../services/UserContext";
+import { numberWithCommas } from "../utils/calcs";
 import { LotUI } from "./models/LotUI";
 import { TradeUI } from "./models/TradeUI";
 import { PositionRow } from "./PositionRow";
@@ -11,13 +12,11 @@ export function PositionList()  {
     const [lots, setLots] = useState<LotUI[]>([])
     const [csp, setCSP] = useState<number>(0);
     const userCtx = useContext(UserContext);
-    
-    // eslint-disable-next-line react-hooks/exhaustive-deps
 
 
     useEffect(() => {
       async function fetchData() {
-        const tradeSvc = new TradeService(userCtx.accessToken);
+        const tradeSvc = new TradeService(userCtx.userData.accessToken);
         const data = await tradeSvc.GetOpenLots();
         const lotUIList: LotUI[] = data.map((t) => {
             return {
@@ -54,11 +53,12 @@ export function PositionList()  {
 
     const onTradeCompleteHandle = () => {
       setTradePop(false);
+      setTradeData(tradeData);
       //fetchData();
     }
 
     return (
-<div className="bp3-dark">
+<Card>
 <ButtonGroup>
 <Popover        
                 interactionKind={PopoverInteractionKind.CLICK_TARGET_ONLY}
@@ -71,7 +71,7 @@ export function PositionList()  {
                 <Trade trade={tradeData} onTradeComplete={onTradeCompleteHandle} />
 </Popover>
 </ButtonGroup>
-<label style={{margin: "0px 0px 0px 25px"}}>CSP Reserve: ${csp.toFixed(2)}</label>
+<label style={{margin: "0px 0px 0px 25px"}}>CSP Reserve: ${numberWithCommas(csp)}</label>
 <table className="bp3-dark bp3-html-table bp3-html-table-condensed bp3-html-table-bordered bp3-html-table-striped bp3-interactive">
   <thead>
     <tr>
@@ -89,6 +89,6 @@ export function PositionList()  {
         })}
   </tbody>
 </table>
-</div>
+</Card>
     )
 }

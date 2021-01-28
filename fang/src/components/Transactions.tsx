@@ -1,3 +1,4 @@
+import { Card } from "@blueprintjs/core";
 import { Cell, Column, EditableCell, Table } from "@blueprintjs/table";
 import React, { useContext, useEffect, useState } from "react";
 import { TradeService } from "../services/TradeService";
@@ -17,7 +18,7 @@ export function Transactions() {
   
       useEffect(() => {
         async function fetchData() {
-            const tradeSvc = new TradeService(userCtx.accessToken);
+            const tradeSvc = new TradeService(userCtx.userData.accessToken);
             const data = await tradeSvc.GetOpenTransactions();
             const trUIList:  TableTransactionUI[] = data.map((t) => {
                 return {
@@ -84,11 +85,11 @@ export function Transactions() {
         };
 
         const commCellRenderer = (rowIndex: number) => {
-            return <EditableCell style={{textAlign: "right"}} value={trans[rowIndex].Commission.toString()} />
+            return <EditableCell style={{textAlign: "right"}} value={trans[rowIndex].Commission.toFixed(2)} />
         };
 
         const feeCellRenderer = (rowIndex: number) => {
-            return <EditableCell style={{textAlign: "right"}} value={trans[rowIndex].Fees.toString()} />
+            return <EditableCell style={{textAlign: "right"}} value={trans[rowIndex].Fees.toFixed(2)} />
         };
 
         const amountCellRenderer = (rowIndex: number) => {
@@ -96,6 +97,7 @@ export function Transactions() {
         }
 
     return(
+        <Card>
         <Table numRows={trans.length} key={Date.now().toString()} enableRowHeader={true} enableRowReordering={true}>
             <Column name="Created" cellRenderer={createdCellRenderer} />
             <Column name="Symbol" cellRenderer={symbolCellRenderer} />
@@ -105,5 +107,6 @@ export function Transactions() {
             <Column name="Fees" cellRenderer={feeCellRenderer} />
             <Column name="Amount" cellRenderer={amountCellRenderer} />
         </Table>
+        </Card>
     );
 }
