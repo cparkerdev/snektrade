@@ -5,11 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Auth0Provider } from '@auth0/auth0-react';
 
-
-
-
-
-
 ReactDOM.render(
   <Auth0Provider
     domain="snekst.us.auth0.com"
@@ -18,11 +13,9 @@ ReactDOM.render(
     audience="https://snekst.com/trade"
     scope="read:current_user update:current_user_metadata openid profile email"
   >
-  <React.StrictMode>
-
-    <App />
-  </React.StrictMode>
-
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
   </Auth0Provider>,
   document.getElementById('root')
 );
