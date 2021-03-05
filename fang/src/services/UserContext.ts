@@ -1,5 +1,7 @@
-import React from "react";
-import { UserModel } from "./models/UserModel";
+import React from 'react';
+import { UserModel } from './models/UserModel';
 
-
-export const UserContext = React.createContext({userData: new UserModel(), updateSettings: () => {},});
+export const UserContext = React.createContext({
+  userData: new UserModel(),
+  updateSettings: () => {},
+});

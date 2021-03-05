@@ -1,12 +1,20 @@
-import { useAuth0 } from "@auth0/auth0-react";
-import { Navbar, Button, Alignment, Intent, Position, Menu, Popover, MenuItem } from "@blueprintjs/core";
-import React from "react";
-import {useHistory} from "react-router-dom";
+import { useAuth0 } from '@auth0/auth0-react';
+import {
+  Navbar,
+  Button,
+  Alignment,
+  Intent,
+  Position,
+  Menu,
+  Popover,
+  MenuItem,
+} from '@blueprintjs/core';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import SnekStLogo from '../imgs/snekst_logo.png';
-import "./AppNavBar.css"
+import './AppNavBar.css';
 
-export function AppNavBar() { 
-
+export function AppNavBar() {
   const { user, isAuthenticated, isLoading } = useAuth0();
 
   /*
@@ -42,80 +50,95 @@ export function AppNavBar() {
 }, [getAccessTokenSilently, setUserMetadata, user]);
 */
 
+  let history = useHistory();
 
-let history = useHistory();
-
-function handlePosClick() {
-  history.push("/tracker");
-}
-
-function handleHomeClick() {
-  history.push("/home");
-}
-
-const LoginButton = () => {
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
-  if(!isAuthenticated) {
-  return <Button intent={Intent.PRIMARY} onClick={() => loginWithRedirect()}>Log In / Sign Up</Button>;
-  } else {
-    return <div></div>
-  }
-};
-
-const ProfileMenu = () => {
-  const { logout } = useAuth0();
-  return (<Menu>
-     <MenuItem icon="log-out" text="Logout" onClick={() => logout({ returnTo: window.location.origin })} />
-  </Menu>
-  );
-}
-
-
-const TrackerBtn = () => {
-  //if(isAuthenticated) {
-  return <Button className="bp3-minimal" icon="bank-account" text="Tracker" onClick={handlePosClick}  />
-  //} else {
-  //  return <div></div>
-  //}
-}
-
-const Profile = () => {
-
-
-
-
-  if (isLoading) {
-    return <div>Loading ...</div>;
+  function handlePosClick() {
+    history.push('/tracker');
   }
 
-  if(isAuthenticated) {
-  return (
-    (
-      <Popover content={<ProfileMenu/>} position={Position.BOTTOM}>
-        <Button minimal={true}>
-          <label style={{verticalAlign:"middle"}}>{user.name}</label>
-          <img className="img-circle" src={user.picture} alt={user.name} />
+  function handleHomeClick() {
+    history.push('/home');
+  }
+
+  const LoginButton = () => {
+    const { loginWithRedirect, isAuthenticated } = useAuth0();
+    if (!isAuthenticated) {
+      return (
+        <Button intent={Intent.PRIMARY} onClick={() => loginWithRedirect()}>
+          Log In / Sign Up
         </Button>
-      </Popover>
-    )
-  );
+      );
     } else {
-      return <div></div>
+      return <div></div>;
     }
-};
+  };
 
+  const ProfileMenu = () => {
+    const { logout } = useAuth0();
+    return (
+      <Menu>
+        <MenuItem
+          icon="log-out"
+          text="Logout"
+          onClick={() => logout({ returnTo: window.location.origin })}
+        />
+      </Menu>
+    );
+  };
 
-return (
-<Navbar className="bp3-dark"  >
-<Navbar.Group align={Alignment.LEFT}>
-    <Navbar.Heading><Button className="bp3-minimal" onClick={handleHomeClick}><img style={{width:"125px", margin:"8px 0px 0px 0px"}} src={SnekStLogo} alt="Snek St." /></Button></Navbar.Heading>
-    <Navbar.Divider />
-    <TrackerBtn />
-</Navbar.Group>
-<Navbar.Group align={Alignment.RIGHT}>
-<LoginButton/>
-<Profile />
-</Navbar.Group>
-</Navbar>
-);
+  const TrackerBtn = () => {
+    //if(isAuthenticated) {
+    return (
+      <Button
+        className="bp3-minimal"
+        icon="bank-account"
+        text="Tracker"
+        onClick={handlePosClick}
+      />
+    );
+    //} else {
+    //  return <div></div>
+    //}
+  };
+
+  const Profile = () => {
+    if (isLoading) {
+      return <div>Loading ...</div>;
+    }
+
+    if (isAuthenticated) {
+      return (
+        <Popover content={<ProfileMenu />} position={Position.BOTTOM}>
+          <Button minimal={true}>
+            <label style={{ verticalAlign: 'middle' }}>{user.name}</label>
+            <img className="img-circle" src={user.picture} alt={user.name} />
+          </Button>
+        </Popover>
+      );
+    } else {
+      return <div></div>;
+    }
+  };
+
+  return (
+    <Navbar className="bp3-dark">
+      <Navbar.Group align={Alignment.LEFT}>
+        <Navbar.Heading>
+          <Button className="bp3-minimal" onClick={handleHomeClick}>
+            <img
+              style={{ width: '125px', margin: '8px 0px 0px 0px' }}
+              src={SnekStLogo}
+              alt="Snek St."
+            />
+          </Button>
+        </Navbar.Heading>
+        <Navbar.Divider />
+        <TrackerBtn />
+      </Navbar.Group>
+      <Navbar.Group align={Alignment.RIGHT}>
+        <LoginButton />
+        <Profile />
+      </Navbar.Group>
+    </Navbar>
+  );
 }
