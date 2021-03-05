@@ -1,4 +1,5 @@
-import { Card, Tab, TabId, Tabs } from "@blueprintjs/core";
+import { useAuth0 } from "@auth0/auth0-react";
+import { Callout, Card, Intent, Tab, TabId, Tabs } from "@blueprintjs/core";
 import React from "react";
 import { Perf } from "./Perf";
 import { PositionList } from "./PositionList";
@@ -10,15 +11,25 @@ export function Tracker() {
 
     const defTab: TabId = "Positions";
     const [currentTab, setCurrentTab] = React.useState(defTab);
-
+    const { isAuthenticated } = useAuth0();
     const handleNavbarTabChange = (navbarTabId: TabId) => setCurrentTab(navbarTabId.toString());
 
-    return(
-        <Card>{/*<Callout title="Demo Data" intent={Intent.WARNING}>
+    const DemoDataCallout = () => {
+        if(!isAuthenticated) {
+        return (
+        <Callout title="Demo Data" intent={Intent.WARNING}>
                 This data is for demonstration purposes only and will not be saved. 
                 To track your own data, please sign up for an account.
              </Callout>
-    */}
+        );
+        } else {
+            return <div/>
+        }
+    }
+
+    return(
+        <Card>
+            <DemoDataCallout/>
         <Tabs
         animate={true}
         id="navbar"

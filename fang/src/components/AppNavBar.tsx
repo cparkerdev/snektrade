@@ -2,7 +2,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Navbar, Button, Alignment, Intent, Position, Menu, Popover, MenuItem } from "@blueprintjs/core";
 import React from "react";
 import {useHistory} from "react-router-dom";
-import SnekStLogo from '../imgs/snekst_logo.svg';
+import SnekStLogo from '../imgs/snekst_logo.png';
 import "./AppNavBar.css"
 
 export function AppNavBar() { 
@@ -72,11 +72,11 @@ const ProfileMenu = () => {
 
 
 const TrackerBtn = () => {
-  if(isAuthenticated) {
+  //if(isAuthenticated) {
   return <Button className="bp3-minimal" icon="bank-account" text="Tracker" onClick={handlePosClick}  />
-  } else {
-    return <div></div>
-  }
+  //} else {
+  //  return <div></div>
+  //}
 }
 
 const Profile = () => {

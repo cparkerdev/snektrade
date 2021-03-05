@@ -1,9 +1,9 @@
-import { Card } from "@blueprintjs/core";
-import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+import { Callout, Card, Intent } from "@blueprintjs/core";
+import React, { useEffect, useState } from "react";
 import { IEXService } from "../services/IEXService";
 import { IEXStock } from "../services/models/IEXStock";
-import { IEXStockPrice } from "../services/models/IEXStockPrice";
-import { numberWithCommas } from "../utils/calcs";
+import "./Home.css"
 
 export type HomeProps = { message: string }; /* could also use interface */
 export const Home = ({ message }: HomeProps) => {
@@ -11,8 +11,9 @@ export const Home = ({ message }: HomeProps) => {
 
     const initData: IEXStock[] = [];
     const [mostActives, setMostActives] = useState(initData);
-    const [btcPrice, setBTCPrice] = useState(new IEXStockPrice());
-    const [ethPrice, setETHPrice] = useState(new IEXStockPrice());
+    const [gainers, setGainers] = useState(initData);
+    const [losers, setLosers] = useState(initData);
+    const { isAuthenticated } = useAuth0();
 
     useEffect(() => {
         async function fetchData() {
@@ -21,21 +22,21 @@ export const Home = ({ message }: HomeProps) => {
           setMostActives(data);
         }
 
-        async function fetchBTC() {
+        async function fetchGainers() {
             const iexSvc = new IEXService();
-            const data = await iexSvc.getCrypto("btcusd");
-            setBTCPrice(data);
+            const data = await iexSvc.getGainers();
+            setGainers(data);
         }
 
-        async function fetchETH() {
+        async function fetchLosers() {
             const iexSvc = new IEXService();
-            const data = await iexSvc.getCrypto("ethusd");
-            setETHPrice(data);
+            const data = await iexSvc.getLosers();
+            setLosers(data);
         }
 
           fetchData();
-          fetchBTC();
-          fetchETH();
+          fetchGainers();
+          fetchLosers();
     }, [])
 
 
@@ -45,9 +46,15 @@ export const Home = ({ message }: HomeProps) => {
 
 
 return (
-    <div>
+    <div style={{margin: "5px 0px 0px 0px"}}>
+        {!isAuthenticated &&
+            <Callout title="Welcome!" intent={Intent.PRIMARY}>
+                Checkout our Tracker app to see how well you are running the wheel.
+            </Callout>
+        }
+    <div className="wrapper">
         <Card>
-            <h5>Most Active</h5>
+            <h4>Most Active</h4>
             <table className="bp3-html-table bp3-html-table-condensed bp3-html-table-striped">
             <thead>
             </thead>
@@ -67,22 +74,46 @@ return (
             </table>
         </Card>
         <Card>
-            <h5>Crypto</h5>
+            <h4>Gainers</h4>
             <table className="bp3-html-table bp3-html-table-condensed bp3-html-table-striped">
             <thead>
             </thead>
             <tbody>
+                {gainers.map(( l, index ) => {
+                return (
                 <tr>
-                    <td>{btcPrice.symbol}</td>
-                    <td>{numberWithCommas(btcPrice.price)}</td>
+                    <td>{l.symbol}</td>
+                    <td>{l.latestPrice}</td>
+                    <td style={getChangeStyle(l.change)}>{l.change}</td>
+                    <td style={getChangeStyle(l.change)}>{(l.changePercent*100).toFixed(2)}</td>
+                    <td>{l.latestVolume}</td>
                 </tr>
-                <tr>
-                    <td>{ethPrice.symbol}</td>
-                    <td>{numberWithCommas(ethPrice.price)}</td>
-                </tr>
+                );
+                })}
             </tbody>
             </table>
         </Card>
+        <Card>
+            <h4>Losers</h4>
+            <table className="bp3-html-table bp3-html-table-condensed bp3-html-table-striped">
+            <thead>
+            </thead>
+            <tbody>
+                {losers.map(( l, index ) => {
+                return (
+                <tr>
+                    <td>{l.symbol}</td>
+                    <td>{l.latestPrice}</td>
+                    <td style={getChangeStyle(l.change)}>{l.change}</td>
+                    <td style={getChangeStyle(l.change)}>{(l.changePercent*100).toFixed(2)}</td>
+                    <td>{l.latestVolume}</td>
+                </tr>
+                );
+                })}
+            </tbody>
+            </table>
+        </Card>
+    </div>
     </div>
 );
 };

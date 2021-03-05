@@ -1,5 +1,6 @@
 import axios from "axios";
 import { IEXStock } from "./models/IEXStock";
+import { IEXStockEarnings } from "./models/IEXStockEarnings";
 import { IEXStockPrice } from "./models/IEXStockPrice";
 
 export class IEXService {
@@ -11,12 +12,29 @@ export class IEXService {
         const d: IEXStock[] = res.data as IEXStock[];
         return d;
     }
-
-    async getCrypto(symbol: string): Promise<IEXStockPrice> {
-        const res = await axios.get(`${this.apiHost}/crypto/${symbol}/price?token=${this.apiToken}`)
-        const d: IEXStockPrice = res.data as IEXStockPrice;
+    
+    async getGainers() : Promise<IEXStock[]> {
+        const res = await axios.get(`${this.apiHost}/stock/market/list/gainers?token=${this.apiToken}`)
+        const d: IEXStock[] = res.data as IEXStock[];
         return d;
     }
 
+    async getLosers() : Promise<IEXStock[]> {
+        const res = await axios.get(`${this.apiHost}/stock/market/list/losers?token=${this.apiToken}`)
+        const d: IEXStock[] = res.data as IEXStock[];
+        return d;
+    }
+
+    async getTodaysEarnings() : Promise<Record<string, IEXStockEarnings[]>> {
+        const res = await axios.get(`${this.apiHost}/stock/market/today-earnings?token=${this.apiToken}`)
+        const d: Record<string, IEXStockEarnings[]> = res.data as Record<string, IEXStockEarnings[]>;
+        return d;
+    }
+
+    async getCrypto(symbol: string): Promise<IEXStockPrice> {
+        const res = await axios.get(`${this.apiHost}/crypto/${symbol}/losers?token=${this.apiToken}`)
+        const d: IEXStockPrice = res.data as IEXStockPrice;
+        return d;
+    }
 
 }
